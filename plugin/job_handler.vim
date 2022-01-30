@@ -20,8 +20,9 @@ export def StartServer(server_name: string): void
         "stoponexit": "int",
     }
     var executable = ""
+    var script_dir = fnamemodify(resolve(expand('<stack>:p')), ':h')
     if !exists('g:vim9_nox11_exe_path')
-        executable = fnamemodify(resolve(expand('<stack>:p')), ':h') .. "/../bin/vim9-nox11"
+        executable = script_dir .. "/../bin/vim9-nox11"
         if has("win64") || has("win32") || has("win16")
             executable = executable .. ".exe"
         endif
@@ -30,13 +31,15 @@ export def StartServer(server_name: string): void
     endif
 
     # ToDo: Investigate how windows IPC works
-    var sock_dir = ""
-    if empty($VIM9_NOX11_SOCK_DIR)
-        if has('mac') || has('unix')
-            sock_dir = "/tmp"
-        endif
-    else
+    var sock_dir = script_dir .. "/../.ipc"
+    
+    if !empty($VIM9_NOX11_SOCK_DIR)
         sock_dir = $VIM9_NOX11_SOCK_DIR
+    endif
+
+    if filereadable(sock_dir)
+        echom "Invalid socket directory"
+        return
     endif
 
     var sock_path = sock_dir .. "/" .. server_name .. ".sock"

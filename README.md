@@ -29,7 +29,7 @@ curl https://github.com/kohnish/vim9-nox11/releases/linux-vim9-nox11 -o vim9-nox
 Configuration
 ```vim
 # Enable vim9-nox11
-packadd vim9-nox11
+packadd! vim9-nox11
 ```
 
 Build requirements
