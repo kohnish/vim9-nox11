@@ -21,6 +21,26 @@
 # vim command or nox11vim command should reopen in the existing vim session
 
 
+_zsh_nox11vim_completion() {
+    if ! (( ${#_comp_file_names[@]} )); then
+        local git_root_dir
+        git_root_dir=`git rev-parse --show-toplevel` 2>/dev/null
+        if [[ -z $git_root_dir ]]; then
+            git_root_dir=.
+        fi
+        if [ ! -z $git_root_dir ]; then
+            cd $git_root_dir > /dev/null
+            _comp_file_names=($(rg --files -g '!*.jpg' -g '!*.png' -g '!*.gif' -g '!*.bmp' -g '!*.jar' -g '!build/' -g'!cmake-build-*/' . | awk -F'/' '{print $NF}'))
+            cd - > /dev/null
+        fi
+    fi
+    compadd $_comp_file_names
+}
+
+if [[ ! -z $VIM ]]; then
+    compdef _zsh_nox11vim_completion nox11vim
+fi
+
 # This environment must exist and used by vim9-nox11
 export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
 
@@ -69,7 +89,6 @@ nox11vim() {
     local result
     local vim_exe=`which --skip-alias --skip-functions vim`
     local vim_cmd
-    local is_vim_ipc=0
     # Parse arg based on string instead of position or option
     for arg in "$@"; do
         if [[ $arg =~ '^(.*/|\.\.|\.)$' ]]; then
@@ -89,7 +108,6 @@ nox11vim() {
     fi
 
     if [[ -S ${VIM9_NOX11_SOCK_DIR}/${vim_server}.sock ]]; then
-        is_vim_ipc=1
         vim_cmd=ipc_vim
     else
         vim_cmd=local_vim
