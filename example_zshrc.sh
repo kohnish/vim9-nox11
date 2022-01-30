@@ -19,7 +19,8 @@
 # vim command or nox11vim command should reopen in the existing vim session
 
 
-export VIM9_NOX11_SOCK_DIR=/tmp
+# This environment must exist and used by vim9-nox11
+export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
 
 ipc_vim() {
     local full_file_path=`realpath $1`
