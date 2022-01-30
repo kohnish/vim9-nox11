@@ -1,7 +1,7 @@
 Vim9-nox11
 =========
 
-Temporary workaround for supporting remote command without X11 dependency
+Temporary workaround for supporting remote command without X11 dependency.  
 Emulate --remote-tab option with environment variable using vim channel api and shell hacks
 
 Usage
