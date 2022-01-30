@@ -85,7 +85,7 @@ nox11vim() {
     if [[ -z $vim_server && ! -z $VIM9_NOX11_VIMSERVER ]]; then
         vim_server=$VIM9_NOX11_VIMSERVER
     elif [[ -z $vim_server ]]; then
-        vim_server=VIMX
+        vim_server=VIM9_NOX
     fi
 
     if [[ -S ${VIM9_NOX11_SOCK_DIR}/${vim_server}.sock ]]; then
