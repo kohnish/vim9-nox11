@@ -1,3 +1,5 @@
+# ToDo: make it work on Mac as well
+
 # Usage 1
 # nox11vim filename
 # inside vim :sh or :term
