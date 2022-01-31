@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     ret = uv_listen((uv_stream_t *)&pipe_handle, 0, on_connection);
     if (ret) {
         printf("%s %i %i\n", __func__, __LINE__, ret);
-        uv_close((uv_handle_t *)&pipe_handle, NULL);
+        unlink(sock_path);
         return -2;
     }
 
