@@ -3,8 +3,8 @@
 
 #include <uv.h>
 
-#define MAX_VIM_INPUT 65536
-#define MAX_REAL_RESPONSE_SIZE (PATH_MAX * 2)
+#define MAX_VIM_INPUT (PATH_MAX + 10)
+#define MAX_REAL_RESPONSE_SIZE (PATH_MAX + 100)
 
 #ifdef __cplusplus
 extern "C" {
