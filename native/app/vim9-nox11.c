@@ -46,7 +46,7 @@ static void on_connection(uv_stream_t *server, int status) {
 }
 
 static void on_signal(uv_signal_t *handle, int signum) {
-    if (signum == SIGINT || signum == SIGTERM) {
+    if (signum == SIGINT) {
         uv_stop(handle->loop);
     }
 }
