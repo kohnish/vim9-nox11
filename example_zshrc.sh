@@ -62,10 +62,15 @@ ipc_vim() {
     echo $full_file_path | nc -U ${VIM9_NOX11_SOCK_DIR}/${sock_name}.sock
 }
 
+local_vim() {
+    local full_file_path=`cross_realpath $1`
+    local sock_name=$2
+    VIM9_NOX11_VIMSERVER=$sock_name $vim_cmd $full_file_path
+}
+
 vim() {
     if [[ (! -z $VIM || ! -z $VIM_TERMINAL) && ! -z $VIM9_NOX11_VIMSERVER && -f $1  && -z $2 ]]; then
-        local full_file_path=`cross_realpath $1`
-        ipc_vim ${full_file_path} ${VIM9_NOX11_VIMSERVER}
+        ipc_vim $1 ${VIM9_NOX11_VIMSERVER}
         if [[ -z $VIM_TERMINAL ]]; then
             exit
         fi
@@ -92,6 +97,7 @@ nox11vim() {
     local real_search_path
     local arg
     local result
+    local vim_or_nc_cmd
     # Parse arg based on string instead of position or option
     for arg in "$@"; do
         if [[ $arg =~ '^(.*/|\.\.|\.)$' ]]; then
@@ -110,13 +116,19 @@ nox11vim() {
         vim_server=VIM9_NOX11
     fi
 
+    if [[ -S ${VIM9_NOX11_SOCK_DIR}/${vim_server}.sock ]]; then
+        vim_or_nc_cmd=ipc_vim
+    else
+        vim_or_nc_cmd=local_vim
+    fi
+
     ## Now we can execute vim
     # Empty argument or only server name
     if [[ -z $file_name ]]; then
-        VIM9_NOX11_VIMSERVER=$vim_server VIM9_NOX11_VIMSERVER=$vim_server $vim_cmd
+        VIM9_NOX11_VIMSERVER=$vim_server $vim_cmd
     # Accessible file argument
     elif [[ -f $file_name ]]; then
-        ipc_vim $file_name $vim_server
+        $vim_or_nc_cmd $file_name $vim_server
     # Search file
     else 
         # First search the current path
@@ -139,7 +151,7 @@ nox11vim() {
             echo $result
             return
         fi
-        ipc_vim $result $vim_server
+        $vim_or_nc_cmd $result $vim_server
     fi
     if [[ ! -z $VIM && -z $VIM_TERMINAL ]]; then
         exit
