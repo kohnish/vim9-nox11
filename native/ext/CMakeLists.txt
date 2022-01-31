@@ -1,4 +1,3 @@
-add_subdirectory(jsmn)
 add_subdirectory(libuv)
 if(${BUILD_TEST})
     add_subdirectory(googletest)

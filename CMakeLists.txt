@@ -5,7 +5,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 option(USE_SYSTEM_GOOGLETEST "Use system gtest" ON)
 option(USE_SYSTEM_LIBUV "Use system gtest" ON)
-option(USE_LOCAL_JSMN "Use local jsmn in the project instead of downloading from the source" ON)
 option(BUILD_FULL_STATIC "Fully static binary including libc for musl" OFF)
 option(BUILD_STATIC "Fully static binary" OFF)
 option(BUILD_TEST "Build test binary" OFF)

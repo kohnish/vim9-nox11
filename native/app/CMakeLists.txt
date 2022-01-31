@@ -7,7 +7,6 @@ set(src
 
 set(lib
     uv
-    jsmn
     )
 
 if(WIN32)
