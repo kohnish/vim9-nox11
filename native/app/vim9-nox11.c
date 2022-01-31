@@ -33,17 +33,14 @@ static void read_pipe_in(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf
 
 static void on_connection(uv_stream_t *server, int status) {
     (void)status;
-    int ret;
     static uv_pipe_t stream = {0};
-    ret = uv_pipe_init(server->loop, &stream, 0);
+    int ret = uv_pipe_init(server->loop, &stream, 0);
     stream.data = server;
-    ret = uv_accept(server, (uv_stream_t *)&stream);
-    ret = uv_read_start((uv_stream_t *)&stream, alloc_buffer, read_pipe_in);
-    if (ret) {
-        printf("%s %i %i\n", __func__, __LINE__, ret);
-        uv_close((uv_handle_t *)server, NULL);
-        abort();
-    }
+    if (ret == 0)
+        ret = uv_accept(server, (uv_stream_t *)&stream);
+
+    if (ret == 0)
+        ret = uv_read_start((uv_stream_t *)&stream, alloc_buffer, read_pipe_in);
 }
 
 static void on_signal(uv_signal_t *handle, int signum) {
@@ -73,14 +70,14 @@ int main(int argc, char *argv[]) {
     if (ret) {
         printf("%s %i %i\n", __func__, __LINE__, ret);
         uv_close((uv_handle_t *)&pipe_handle, NULL);
-        abort();
+        return -2;
     }
 
     uv_signal_init(&loop, &sig_handle);
     uv_signal_start(&sig_handle, on_signal, SIGINT);
 
     uv_run(&loop, UV_RUN_DEFAULT);
-    uv_close((uv_handle_t *)&pipe_handle, NULL);
+    unlink(sock_path);
 
     return 0;
 }

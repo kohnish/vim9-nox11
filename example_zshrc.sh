@@ -70,7 +70,7 @@ vim() {
             exit
         fi
     elif [[ ! -z $VIM ]]; then
-        echo "Already in vim shell without X server"
+        echo "Already in vim shell without socket"
     else
         $vim_cmd $@
     fi
@@ -107,7 +107,7 @@ nox11vim() {
     if [[ -z $vim_server && ! -z $VIM9_NOX11_VIMSERVER ]]; then
         vim_server=$VIM9_NOX11_VIMSERVER
     elif [[ -z $vim_server ]]; then
-        vim_server=VIM9_NOX
+        vim_server=VIM9_NOX11
     fi
 
     ## Now we can execute vim
