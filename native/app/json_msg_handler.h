@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-void handle_msg(uv_loop_t *loop, const char *msg_str);
+void handle_msg(const char *msg_str);
 
 #ifdef __cplusplus
 }

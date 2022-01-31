@@ -20,7 +20,7 @@ static void read_pipe_in(uv_stream_t *stream, ssize_t nread, const uv_buf_t *buf
     int counter = 0;
     for (size_t i = 0; i < strlen(buf->base); i++) {
         if (buf->base[i] == '\n') {
-            handle_msg(stream->loop, line);
+            handle_msg(line);
             memset(line, 0, MAX_VIM_INPUT);
             counter = 0;
         } else {
