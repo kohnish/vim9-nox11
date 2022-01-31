@@ -12,9 +12,14 @@ def HandleStdin(channel: channel, msg: string): void
     endtry
 enddef
 
+def HandleStderr(channel: channel, msg: string): void
+    echom msg
+enddef
+
 export def StartServer(server_name: string): void
     var job_opt = {
         "out_cb": HandleStdin,
+        "err_cb": HandleStderr,
         "out_mode": "raw",
         "in_mode": "json",
         "stoponexit": "int",

@@ -60,26 +60,27 @@ int main(int argc, char *argv[]) {
     if (argc == 2) {
         strcpy(sock_path, argv[1]);
     } else {
-        printf("%s %i %i\n", __func__, __LINE__, argc);
+        fprintf(stderr,"%s %i %i\n", __func__, __LINE__, argc);
         return -1;
     }
 
     uv_loop_init(&loop);
 
-    // ToDo: notify vim when the socket is already taken
     ret = uv_pipe_init(&loop, &pipe_handle, 0);
-    ret = uv_pipe_bind(&pipe_handle, sock_path);
+    int b_ret = uv_pipe_bind(&pipe_handle, sock_path);
     ret = uv_listen((uv_stream_t *)&pipe_handle, 0, on_connection);
     if (ret) {
-        printf("%s %i %i\n", __func__, __LINE__, ret);
-        unlink(sock_path);
+        fprintf(stderr, "%s %i %i\n", __func__, __LINE__, ret);
+        if (b_ret == 0) {
+            unlink(sock_path);
+        }
         return -2;
     }
 
     uv_signal_init(&loop, &sig_handle);
     uv_signal_start(&sig_handle, on_signal, SIGINT);
-
     uv_run(&loop, UV_RUN_DEFAULT);
+
     unlink(sock_path);
 
     return 0;
