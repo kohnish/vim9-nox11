@@ -12,7 +12,6 @@ extern "C" {
 
 void handle_msg(uv_loop_t *loop, const char *msg_str);
 
-
 #ifdef __cplusplus
 }
 #endif

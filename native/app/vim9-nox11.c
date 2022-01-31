@@ -36,11 +36,13 @@ static void on_connection(uv_stream_t *server, int status) {
     static uv_pipe_t stream = {0};
     int ret = uv_pipe_init(server->loop, &stream, 0);
     stream.data = server;
-    if (ret == 0)
+    if (ret == 0) {
         ret = uv_accept(server, (uv_stream_t *)&stream);
+    }
 
-    if (ret == 0)
+    if (ret == 0) {
         ret = uv_read_start((uv_stream_t *)&stream, alloc_buffer, read_pipe_in);
+    }
 }
 
 static void on_signal(uv_signal_t *handle, int signum) {
@@ -64,6 +66,7 @@ int main(int argc, char *argv[]) {
 
     uv_loop_init(&loop);
 
+    // ToDo: notify vim when the socket is already taken
     ret = uv_pipe_init(&loop, &pipe_handle, 0);
     ret = uv_pipe_bind(&pipe_handle, sock_path);
     ret = uv_listen((uv_stream_t *)&pipe_handle, 0, on_connection);

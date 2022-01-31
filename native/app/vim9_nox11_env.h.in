@@ -10,8 +10,7 @@ extern "C" {
 #define PROJECT_BINARY_DIR "@PROJECT_BINARY_DIR@"
 #endif
 
-
-#endif //ENV_H
+#endif // ENV_H
 #ifdef __cplusplus
 }
 #endif
