@@ -46,11 +46,6 @@ export vim_cmd=`which vim`
 cross_realpath() (
     local orig_dir=$PWD
     cd "$(dirname "$1")"
-    local link=$(readlink "$(basename "$1")")
-    while [ "$link" ]; do
-        cd "$(dirname "$link")"
-        link=$(readlink "$(basename "$1")")
-    done
     local real_path="$PWD/$(basename "$1")"
     cd "$orig_dir"
     echo "$real_path"
