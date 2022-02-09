@@ -79,7 +79,7 @@ vim() {
 nox11vim() {
     # When inside the vim shell, no new blank session
     if [[ ! -z $VIM && -z $VIM9_NOX11_VIMSERVER ]]; then
-       echo "Already in vim shell without X server"
+       echo "Already in vim shell without socket"
        return
     elif [[ ! -z $VIM9_NOX11_VIMSERVER && -z $1 ]]; then
        echo "Already in vim shell"
