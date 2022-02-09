@@ -64,7 +64,7 @@ local_vim() {
 }
 
 vim() {
-    if [[ (! -z $VIM || ! -z $VIM_TERMINAL) && ! -z $VIM9_NOX11_VIMSERVER && -f $1  && -z $2 ]]; then
+    if [[ (! -z $VIM || ! -z $VIM_TERMINAL) && ! -z $VIM9_NOX11_VIMSERVER && ! -z $1  && -z $2 ]]; then
         ipc_vim $1 ${VIM9_NOX11_VIMSERVER}
         if [[ -z $VIM_TERMINAL ]]; then
             exit
