@@ -44,11 +44,15 @@ export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
 export vim_cmd=`which vim`
 
 cross_realpath() (
-    local orig_dir=$PWD
-    cd "$(dirname "$1")"
-    local real_path="$PWD/$(basename "$1")"
-    cd "$orig_dir"
-    echo "$real_path"
+    if [ -x "$(command -v realpath)" ]; then
+        echo `realpath $1`
+    else
+        local orig_dir=$PWD
+        cd "$(dirname "$1")"
+        local real_path="$PWD/$(basename "$1")"
+        cd "$orig_dir"
+        echo "$real_path"
+    fi
 )
 
 ipc_vim() {
@@ -65,7 +69,11 @@ local_vim() {
 
 vim() {
     if [[ (! -z $VIM || ! -z $VIM_TERMINAL) && ! -z $VIM9_NOX11_VIMSERVER && ! -z $1  && -z $2 ]]; then
-        ipc_vim $1 ${VIM9_NOX11_VIMSERVER}
+        if [[ ! -f $! ]]; then
+            echo "No ipc_vim supported for new file"
+        else
+            ipc_vim $1 ${VIM9_NOX11_VIMSERVER}
+        fi
         if [[ -z $VIM_TERMINAL ]]; then
             exit
         fi
