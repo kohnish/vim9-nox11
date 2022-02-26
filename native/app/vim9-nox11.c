@@ -64,6 +64,11 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
+    if (access(sock_path, F_OK) == 0) {
+        fprintf(stderr,"vim9-nox11: %s already exists. Aborting.", sock_path);
+        return -2;
+    }
+
     uv_loop_init(&loop);
 
     ret = uv_pipe_init(&loop, &pipe_handle, 0);
@@ -74,7 +79,7 @@ int main(int argc, char *argv[]) {
         if (b_ret == 0) {
             unlink(sock_path);
         }
-        return -2;
+        return -3;
     }
 
     uv_signal_init(&loop, &sig_handle);
