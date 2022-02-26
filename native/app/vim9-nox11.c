@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     if (argc == 2) {
         sock_path = argv[1];
     } else {
-        fprintf(stderr,"%s %i %i\n", __func__, __LINE__, argc);
+        fprintf(stderr,"vim9-nox11: %s %i %i\n", __func__, __LINE__, argc);
         return -1;
     }
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
     int b_ret = uv_pipe_bind(&pipe_handle, sock_path);
     ret = uv_listen((uv_stream_t *)&pipe_handle, 0, on_connection);
     if (ret) {
-        fprintf(stderr, "%s %i %i\n", __func__, __LINE__, ret);
+        fprintf(stderr, "vim9-nox11: %s %i %i\n", __func__, __LINE__, ret);
         if (b_ret == 0) {
             unlink(sock_path);
         }
