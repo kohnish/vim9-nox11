@@ -43,7 +43,7 @@ export def StartServer(server_name: string): void
     endif
 
     if filereadable(sock_dir)
-        echom "Invalid socket directory"
+        echom "Vim9-nox11: Invalid socket directory"
         return
     endif
 
