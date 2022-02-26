@@ -56,9 +56,9 @@ int main(int argc, char *argv[]) {
     static uv_signal_t sig_handle;
     static uv_pipe_t pipe_handle;
     int ret;
-    static char sock_path[PATH_MAX] = {0};
+    const char *sock_path;
     if (argc == 2) {
-        strcpy(sock_path, argv[1]);
+        sock_path = argv[1];
     } else {
         fprintf(stderr,"%s %i %i\n", __func__, __LINE__, argc);
         return -1;
