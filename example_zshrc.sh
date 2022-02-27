@@ -42,6 +42,7 @@ fi
 # This environment must exist and used by vim9-nox11
 export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
 export vim_cmd=`which vim`
+export EDITOR=$vim_cmd
 
 cross_realpath() (
     if [ -x "$(command -v realpath)" ]; then
