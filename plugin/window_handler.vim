@@ -3,7 +3,7 @@ vim9script
 def FocusIfOpen(filename: string): bool
     var buffers = getbufinfo()
     for buf in buffers
-        if buf.loaded && buf.name == filename
+        if buf.loaded && buf.name == filename && len(buf.windows) > 0
             win_gotoid(buf.windows[0])
             return true
         endif
