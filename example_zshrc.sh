@@ -80,7 +80,7 @@ vim() {
     elif [[ ! -z $VIM ]]; then
         echo "Already in vim shell without socket"
     else
-        $vim_cmd $@
+        VIM9_NOX11_VIMSERVER=VIM`date +%s` $vim_cmd $@
     fi
 }
 
@@ -105,7 +105,7 @@ nox11vim() {
     for arg in "$@"; do
         if [[ $arg =~ '^(.*/|\.\.|\.)$' ]]; then
             search_path=$arg
-        elif [[ $arg =~ '^VIM[A-Z]+$' ]]; then
+        elif [[ $arg =~ '^VIM([A-Z]+|[0-9]+)$' ]]; then
             vim_server=$arg
         else
             file_name=$arg
@@ -116,7 +116,7 @@ nox11vim() {
     if [[ -z $vim_server && ! -z $VIM9_NOX11_VIMSERVER ]]; then
         vim_server=$VIM9_NOX11_VIMSERVER
     elif [[ -z $vim_server ]]; then
-        vim_server=VIM9_NOX11
+        vim_server=VIM9`date +%s`
     fi
 
     if [[ -S ${VIM9_NOX11_SOCK_DIR}/${vim_server}.sock ]]; then
