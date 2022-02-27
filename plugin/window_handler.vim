@@ -11,14 +11,12 @@ def FocusIfOpen(filename: string): bool
 enddef
 
 def FocusOnNonTerminal(filename: string): bool
-    if &buftype == "terminal"
-        for buf in getbufinfo()
-            if buf.loaded && len(buf.windows) > 0 && getbufvar(buf.bufnr, '&buftype') != "terminal"
-                win_gotoid(buf.windows[0])
-                return true
-            endif
-        endfor
-    endif
+    for buf in getbufinfo()
+        if buf.loaded && len(buf.windows) > 0 && getbufvar(buf.bufnr, '&buftype') != "terminal"
+            win_gotoid(buf.windows[0])
+            return true
+        endif
+    endfor
     return false
 enddef
 
@@ -28,7 +26,7 @@ export def HandleJsonInput(json_msg: dict<any>): void
         var file_path = json_msg[key_name]
         if filereadable(file_path)
             if !FocusIfOpen(file_path)
-                if !FocusOnNonTerminal(file_path)
+                if &buftype == "terminal" && !FocusOnNonTerminal(file_path)
                     execute 'tabnew ' .. file_path
                 elseif &modified
                     execute 'vsplit ' .. file_path
