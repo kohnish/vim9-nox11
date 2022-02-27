@@ -18,7 +18,7 @@ export def HandleJsonInput(json_msg: dict<any>): void
         if filereadable(file_path)
             if !FocusIfOpen(file_path)
                 if &modified
-                    execute "tabedit " .. file_path
+                    execute 'vsplit ' .. file_path
                 else
                     execute "edit " .. file_path
                 endif
