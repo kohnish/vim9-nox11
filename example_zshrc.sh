@@ -70,7 +70,7 @@ local_vim() {
 
 vim() {
     if [[ (! -z $VIM || ! -z $VIM_TERMINAL) && ! -z $VIM9_NOX11_VIMSERVER && ! -z $1  && -z $2 ]]; then
-        if [[ ! -f $! ]]; then
+        if [[ ! -r $1 ]]; then
             echo "No ipc_vim supported for new file"
         else
             ipc_vim $1 ${VIM9_NOX11_VIMSERVER}
