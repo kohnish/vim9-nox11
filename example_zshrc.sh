@@ -141,10 +141,11 @@ nox11vim() {
         else
             real_search_path=$search_path
         fi
-        result="$(rg --files $real_search_path | rg /$file_name\$)"
-        # When no search path is specified, try parent directory as well 
+        result="$(git ls-files $real_search_path | fgrep $file_name)"
+        # When no search path is specified, try git root
         if [[ -z $result && -z $search_path ]] then;
-            result="$(rg --files .. | rg /$file_name\$)"
+            git_root_dir=`git rev-parse --show-toplevel`
+            result="$(git ls-files $git_root_dir | fgrep $file_name)"
         fi
         if [[ -z $result ]]; then
             echo "File not found"
