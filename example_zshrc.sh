@@ -22,17 +22,14 @@
 _zsh_nox11vim_completion() {
     if ! (( ${#_comp_file_names[@]} )); then
         local git_root_dir
-        git_root_dir=`git rev-parse --show-toplevel` 2>/dev/null
-        if [[ -z $git_root_dir ]]; then
-            git_root_dir=.
-        fi
+        git_root_dir=`git rev-parse --show-toplevel`
         if [ ! -z $git_root_dir ]; then
-            cd $git_root_dir > /dev/null
-            _comp_file_names=($(rg --files -g '!*.jpg' -g '!*.png' -g '!*.gif' -g '!*.bmp' -g '!*.jar' -g '!build/' -g'!cmake-build-*/' . | awk -F'/' '{print $NF}'))
-            cd - > /dev/null
+            _comp_file_names=($(git ls-files --full-name $git_root_dir | awk -F '/' '{print $NF}'))
+            compadd $_comp_file_names
         fi
+    else
+        compadd $_comp_file_names
     fi
-    compadd $_comp_file_names
 }
 
 if [[ ! -z $VIM ]]; then
