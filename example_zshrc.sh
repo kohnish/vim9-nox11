@@ -99,6 +99,7 @@ nox11vim() {
     local arg
     local result
     local vim_or_nc_cmd
+    local git_root_dir
     # Parse arg based on string instead of position or option
     for arg in "$@"; do
         if [[ $arg =~ '^(.*/|\.\.|\.)$' ]]; then
