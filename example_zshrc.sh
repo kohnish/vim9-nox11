@@ -74,9 +74,9 @@ vim() {
             echo "No ipc_vim supported for new file"
         else
             ipc_vim $1 ${VIM9_NOX11_VIMSERVER}
-        fi
-        if [[ -z $VIM_TERMINAL ]]; then
-            exit
+            if [[ -z $VIM_TERMINAL ]]; then
+                exit
+            fi
         fi
     elif [[ ! -z $VIM ]]; then
         echo "Already in vim shell without socket"
