@@ -3,6 +3,5 @@
 #include <gtest/gtest.h>
 
 TEST(handle_msg, handle_msg_1) {
-    static uv_loop_t loop;
-    handle_msg(&loop, "test");
+    handle_msg("test");
 }
