@@ -1,11 +1,11 @@
 vim9script
 
-var WIN_FOCUSED = "f"
-var WIN_NOT_FOUND_FOCUSED_ON_NON_TERMINAL = "t"
-var WIN_NOT_FOUND_ONLY_TERMINAL = "o"
-var WIN_NOT_FOUND = "n"
+var WIN_FOCUSED = 0 
+var WIN_NOT_FOUND_FOCUSED_ON_NON_TERMINAL = 1
+var WIN_NOT_FOUND_ONLY_TERMINAL = 2
+var WIN_NOT_FOUND = 3
 
-def FocusIfOpen(filename: string): string
+def FocusIfOpen(filename: string): number
     var f_ret = WIN_NOT_FOUND
     for buf in getbufinfo()
         if buf.loaded && buf.name == filename && len(buf.windows) > 0
