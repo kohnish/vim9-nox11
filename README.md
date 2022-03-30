@@ -19,9 +19,15 @@ Installation
 mkdir -p ~/.vim/pack/plugins/opt
 git clone https://github.com/kohnish/vim9-nox11 ~/.vim/pack/plugins/opt/vim9-nox11
 cd ~/.vim/pack/plugins/opt/vim9-nox11
-# Not available yet (See Build section)
-curl https://github.com/kohnish/vim9-nox11/releases/linux-vim9-nox11 -o vim9-nox11
+# For Linux 
+curl -L https://github.com/kohnish/vim9-nox11/releases/download/v0.1/vim9-nox11-linux-x86-64 -o ~/.vim/pack/plugins/opt/vim9-nox11/bin/vim9-nox11 ~/.vim/pack/plugins/opt/vim9-nox11/bin/vim9-nox11
+chmod +x ~/.vim/pack/plugins/opt/vim9-nox11/bin/vim9-nox11
+# For Windows
+curl -L https://github.com/kohnish/vim9-nox11/releases/download/v0.1/vim9-nox11-win-x86-64 -o ~/.vim/pack/plugins/opt/vim9-nox11/bin/vim9-nox11.exe
+chmod +x ~/.vim/pack/plugins/opt/vim9-nox11/bin/vim9-nox11.exe
+# Or see the build section for compiling locally
 ```
+
 Vim configuration
 ```vim
 # Enable vim9-nox11
