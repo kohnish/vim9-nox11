@@ -22,11 +22,13 @@
 _zsh_nox11vim_completion() {
     if ! (( ${#_comp_file_names[@]} )); then
         local git_root_dir
-        git_root_dir=`git rev-parse --show-toplevel`
+        git_root_dir=`git rev-parse --show-toplevel 2> /dev/null`
         if [ ! -z $git_root_dir ]; then
             _comp_file_names=($(git ls-files --full-name $git_root_dir | awk -F '/' '{print $NF}'))
-            compadd $_comp_file_names
+        else
+            _comp_file_names=($(rg --files | awk -F '/' '{print $NF}'))
         fi
+        compadd $_comp_file_names
     else
         compadd $_comp_file_names
     fi
@@ -38,7 +40,7 @@ fi
 
 # This environment must exist and used by vim9-nox11
 export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
-export vim_cmd=`which vim`
+export vim_cmd=`whence -p vim`
 export EDITOR=$vim_cmd
 
 cross_realpath() (
@@ -85,7 +87,7 @@ vim() {
 nox11vim() {
     # When inside the vim shell, no new blank session
     if [[ ! -z $VIM && -z $VIM9_NOX11_VIMSERVER ]]; then
-       echo "Already in vim shell without socket"
+       echo "Already in vim shell without X server"
        return
     elif [[ ! -z $VIM9_NOX11_VIMSERVER && -z $1 ]]; then
        echo "Already in vim shell"
@@ -99,10 +101,12 @@ nox11vim() {
     local arg
     local result
     local vim_or_nc_cmd
+    local found=0
+    local vim_cmd=`whence -p vim`
     local git_root_dir
     # Parse arg based on string instead of position or option
     for arg in "$@"; do
-        if [[ $arg =~ '^(.*/|\.\.|\.)$' ]]; then
+        if [[ -d $arg ]]; then
             search_path=$arg
         elif [[ $arg =~ '^VIM([A-Z]+|[0-9]+)$' ]]; then
             vim_server=$arg
@@ -115,7 +119,7 @@ nox11vim() {
     if [[ -z $vim_server && ! -z $VIM9_NOX11_VIMSERVER ]]; then
         vim_server=$VIM9_NOX11_VIMSERVER
     elif [[ -z $vim_server ]]; then
-        vim_server=VIM9`date +%s`
+        vim_server=VIM`date +%s`
     fi
 
     if [[ -S ${VIM9_NOX11_SOCK_DIR}/${vim_server}.sock ]]; then
@@ -131,32 +135,31 @@ nox11vim() {
     # Accessible file argument
     elif [[ -f $file_name ]]; then
         $vim_or_nc_cmd $file_name $vim_server
+        found=1
     # Search file
     else 
-        # First search the current path
-        if [[ -z $search_path ]]; then
-            real_search_path=.
-        else
-            real_search_path=$search_path
-        fi
-        result=$(git ls-files $real_search_path | egrep "(/|^)${file_name}$")
-        # When no search path is specified, try git root
-        if [[ -z $result && -z $search_path ]] then;
-            git_root_dir=`git rev-parse --show-toplevel`
+        git_root_dir=`git rev-parse --show-toplevel 2> /dev/null`
+        if [[ ! -z $git_root_dir && -z $search_path ]]; then
             result=$(git ls-files $git_root_dir | egrep "(/|^)${file_name}$")
+        elif [[ ! -z $git_root_dir && ! -z $search_path ]]; then
+            result=$(git ls-files $search_path | egrep "(/|^)${file_name}$")
+        elif [[ ! -z $search_path ]]; then
+            result=$(rg --files $search_path | egrep "(/|^)${file_name}$")
+        else
+            result=$(rg --files | egrep "(/|^)${file_name}$")
         fi
         if [[ -z $result ]]; then
             echo "File not found"
-            return
-        fi
-        if [ `wc -l <<< $result` -ne 1 ]; then
+        elif [ `wc -l <<< $result` -ne 1 ]; then
             echo "Multiple files found"
             echo $result
-            return
+        else
+            $vim_or_nc_cmd $result $vim_server
+            found=1
         fi
-        $vim_or_nc_cmd $result $vim_server
     fi
-    if [[ ! -z $VIM && -z $VIM_TERMINAL ]]; then
+    # Exit vim shell to go to the opened file, in case of vim terminal, keep it open
+    if [[ $found -eq 1 && ! -z $VIM && -z $VIM_TERMINAL ]]; then
         exit
     fi
 }
