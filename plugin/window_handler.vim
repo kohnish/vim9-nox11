@@ -35,11 +35,13 @@ export def HandleJsonInput(json_msg: dict<any>): void
             if f_ret == WIN_NOT_FOUND_ONLY_TERMINAL
                 execute 'tabnew ' .. file_path
             elseif f_ret != WIN_FOCUSED
-                if &modified || cmd == "remote_vsplit"
+                if cmd == "remote_vsplit"
                     execute 'vsplit ' .. file_path
                 elseif cmd == "remote_tab"
                     echom "tabnew"
                     execute 'tabnew ' .. file_path
+                elseif &modified
+                    execute 'vsplit ' .. file_path
                 else
                     execute "edit " .. file_path
                 endif
