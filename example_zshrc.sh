@@ -58,21 +58,32 @@ cross_realpath() (
 ipc_vim() {
     local full_file_path=`cross_realpath $1`
     local sock_name=$2
-    echo $full_file_path | nc -U ${VIM9_NOX11_SOCK_DIR}/${sock_name}.sock
+    local cmd=$3
+    echo $full_file_path $cmd | nc -U ${VIM9_NOX11_SOCK_DIR}/${sock_name}.sock
 }
 
 local_vim() {
+    local vim_cmd=`whence -p vim`
     local full_file_path=`cross_realpath $1`
     local sock_name=$2
     VIM9_NOX11_VIMSERVER=$sock_name $vim_cmd $full_file_path
 }
 
 vim() {
-    if [[ (! -z $VIM || ! -z $VIM_TERMINAL) && ! -z $VIM9_NOX11_VIMSERVER && ! -z $1  && -z $2 ]]; then
+    for arg in "$@"; do
+        if [[ $arg == "/v" ]]; then
+            cmd="/v"
+        elif [[ $arg == "/t" ]]; then
+            cmd="/t"
+        elif [[ $arg == "/e" ]]; then
+            cmd="/e"
+        fi
+    done
+    if [[ (! -z $VIM || ! -z $VIM_TERMINAL) && ! -z $VIM9_NOX11_VIMSERVER && ! -z $1  && (! -z $cmd || -z $2 ) ]] then
         if [[ ! -r $1 ]]; then
-            echo "No ipc_vim supported for new file"
+            echo "Cannot open non-existent file with ipc_vim"
         else
-            ipc_vim $1 ${VIM9_NOX11_VIMSERVER}
+            ipc_vim $1 ${VIM9_NOX11_VIMSERVER} $cmd
             if [[ -z $VIM_TERMINAL ]]; then
                 exit
             fi
@@ -80,6 +91,7 @@ vim() {
     elif [[ ! -z $VIM ]]; then
         echo "Already in vim shell without socket"
     else
+        local vim_cmd=`whence -p vim`
         VIM9_NOX11_VIMSERVER=VIM`date +%s` $vim_cmd $@
     fi
 }
@@ -104,12 +116,19 @@ nox11vim() {
     local found=0
     local vim_cmd=`whence -p vim`
     local git_root_dir
+    local cmd='/e'
     # Parse arg based on string instead of position or option
     for arg in "$@"; do
         if [[ -d $arg ]]; then
             search_path=$arg
         elif [[ $arg =~ '^VIM([A-Z]+|[0-9]+)$' ]]; then
             vim_server=$arg
+        elif [[ $arg == "/v" ]]; then
+            cmd="/v"
+        elif [[ $arg == "/t" ]]; then
+            cmd="/t"
+        elif [[ $arg == "/e" ]]; then
+            cmd="/e"
         else
             file_name=$arg
         fi
@@ -134,7 +153,7 @@ nox11vim() {
         VIM9_NOX11_VIMSERVER=$vim_server $vim_cmd
     # Accessible file argument
     elif [[ -f $file_name ]]; then
-        $vim_or_nc_cmd $file_name $vim_server
+        $vim_or_nc_cmd $file_name $vim_server $cmd
         found=1
     # Search file
     else 
@@ -154,7 +173,7 @@ nox11vim() {
             echo "Multiple files found"
             echo $result
         else
-            $vim_or_nc_cmd $result $vim_server
+            $vim_or_nc_cmd $result $vim_server $cmd
             found=1
         fi
     fi

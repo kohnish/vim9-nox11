@@ -24,6 +24,10 @@ enddef
 
 export def HandleJsonInput(json_msg: dict<any>): void
     var key_name = "file_path"
+    var cmd = ""
+    if has_key(json_msg, "cmd")
+        cmd = json_msg["cmd"]
+    endif
     if has_key(json_msg, key_name)
         var file_path = json_msg[key_name]
         if filereadable(file_path)
@@ -31,8 +35,11 @@ export def HandleJsonInput(json_msg: dict<any>): void
             if f_ret == WIN_NOT_FOUND_ONLY_TERMINAL
                 execute 'tabnew ' .. file_path
             elseif f_ret != WIN_FOCUSED
-                if &modified
+                if &modified || cmd == "remote_vsplit"
                     execute 'vsplit ' .. file_path
+                elseif cmd == "remote_tab"
+                    echom "tabnew"
+                    execute 'tabnew ' .. file_path
                 else
                     execute "edit " .. file_path
                 endif
