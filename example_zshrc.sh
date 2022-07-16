@@ -42,12 +42,9 @@ cvim() {
     local vim_server
     local file_name
     local search_path
-    local real_search_path
     local arg
     local result
-    local vim_or_nc_cmd
     local found=0
-    local vim_cmd=`whence -p vim`
     local git_root_dir
     local cmd='/e'
     # Parse arg based on string instead of position or option
@@ -74,12 +71,6 @@ cvim() {
         vim_server=$VIM9_NOX11_VIMSERVER
     elif [[ -z $vim_server ]]; then
         vim_server=VIM`date +%s`
-    fi
-
-    if [[ -S ${VIM9_NOX11_SOCK_DIR}/${vim_server}.sock ]]; then
-        vim_or_nc_cmd=ipc_vim
-    else
-        vim_or_nc_cmd=local_vim
     fi
 
     ## Now we can execute vim
