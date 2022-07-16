@@ -40,8 +40,7 @@ fi
 
 # This environment must exist and used by vim9-nox11
 export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
-export vim_cmd=`whence -p vim`
-export EDITOR=$vim_cmd
+export EDITOR=vim
 
 cross_realpath() (
     if [ -x "$(command -v realpath)" ]; then
@@ -59,7 +58,8 @@ ipc_vim() {
     local full_file_path=`cross_realpath $1`
     local sock_name=$2
     local cmd=$3
-    echo $full_file_path $cmd | nc -U ${VIM9_NOX11_SOCK_DIR}/${sock_name}.sock
+    local line=$4
+    echo $line $full_file_path $cmd | nc -U ${VIM9_NOX11_SOCK_DIR}/${sock_name}.sock
 }
 
 local_vim() {
@@ -70,26 +70,25 @@ local_vim() {
 }
 
 vim() {
+    local cmd="/e"
+    local line="+0"
     for arg in "$@"; do
-        if [[ $arg == "/v" ]]; then
+        if [[ -f $arg ]]; then
+            local file=$arg
+        elif [[ $arg =~ '^\+[0-9]+' ]]; then
+            line=$arg
+        elif [[ $arg == "/v" ]]; then
             cmd="/v"
         elif [[ $arg == "/t" ]]; then
             cmd="/t"
-        elif [[ $arg == "/e" ]]; then
-            cmd="/e"
         fi
     done
-    if [[ (! -z $VIM || ! -z $VIM_TERMINAL) && ! -z $VIM9_NOX11_VIMSERVER && ! -z $1  && (! -z $cmd || -z $2 ) ]] then
-        if [[ ! -r $1 ]]; then
-            echo "Cannot open non-existent file with ipc_vim"
-        else
-            ipc_vim $1 ${VIM9_NOX11_VIMSERVER} $cmd
-            if [[ -z $VIM_TERMINAL ]]; then
-                exit
-            fi
+
+    if [[ ! -z $VIM9_NOX11_VIMSERVER && ! -z $file ]]; then
+        ipc_vim $file ${VIM9_NOX11_VIMSERVER} $cmd $line
+        if [[ -z $VIM_TERMINAL ]]; then
+            exit
         fi
-    elif [[ ! -z $VIM ]]; then
-        echo "Already in vim shell without socket"
     else
         local vim_cmd=`whence -p vim`
         VIM9_NOX11_VIMSERVER=VIM`date +%s` $vim_cmd $@
@@ -121,6 +120,8 @@ nox11vim() {
     for arg in "$@"; do
         if [[ -d $arg ]]; then
             search_path=$arg
+        elif [[ -f $arg ]]; then
+            file_name=$arg
         elif [[ $arg =~ '^VIM([A-Z]+|[0-9]+)$' ]]; then
             vim_server=$arg
         elif [[ $arg == "/v" ]]; then
@@ -153,7 +154,7 @@ nox11vim() {
         VIM9_NOX11_VIMSERVER=$vim_server $vim_cmd
     # Accessible file argument
     elif [[ -f $file_name ]]; then
-        $vim_or_nc_cmd $file_name $vim_server $cmd
+        $vim_or_nc_cmd $file_name $vim_server $cmd +0
         found=1
     # Search file
     else 
@@ -173,7 +174,7 @@ nox11vim() {
             echo "Multiple files found"
             echo $result
         else
-            $vim_or_nc_cmd $result $vim_server $cmd
+            $vim_or_nc_cmd $result $vim_server $cmd +0
             found=1
         fi
     fi
@@ -182,4 +183,3 @@ nox11vim() {
         exit
     fi
 }
-
