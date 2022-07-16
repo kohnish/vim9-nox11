@@ -1,24 +1,15 @@
-# Usage 1
-# nox11vim filename
-# inside vim :sh or :term
-# vim command or nox11vim command should reopen in the existing vim session
+# Usage
+# 1. Install nox11-vim shell script to path and set compulsory environment variable (VIM9_NOX11_SOCK_DIR)
+# 2. Optionally install other zsh functions in your zshrc or zshenv for replacing vim and opening files without full path
 
-# Usage 2
-# nox11vim filename VIMS(capital starts with VIM)
-# inside vim :sh or :term
-# vim command or nox11vim command should reopen in the existing vim session
-
-# Usage 3
-# nox11vim VIMS(capital starts with VIM) filename
-# inside vim :sh or :term
-# vim command or nox11vim command should reopen in the existing vim session
-
-# Usage 4
-# nox11vim VIMS(capital starts with VIM) (starts blank session with vim server enabled)
-# inside vim :sh or :term
-# vim command or nox11vim command should reopen in the existing vim session
+# This environment must exist and used by vim9-nox11
+export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
+export EDITOR=nox11-vim
+# Optionally replace vim
+alias vim=nox11-vim
 
 
+# Optional setting for opening files without full path with completion
 _zsh_nox11vim_completion() {
     if ! (( ${#_comp_file_names[@]} )); then
         local git_root_dir
@@ -38,64 +29,7 @@ if [[ ! -z $VIM ]]; then
     compdef _zsh_nox11vim_completion nox11vim
 fi
 
-# This environment must exist and used by vim9-nox11
-export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
-export EDITOR=vim
-
-cross_realpath() (
-    if [ -x "$(command -v realpath)" ]; then
-        echo `realpath $1`
-    else
-        local orig_dir=$PWD
-        cd "$(dirname "$1")"
-        local real_path="$PWD/$(basename "$1")"
-        cd "$orig_dir"
-        echo "$real_path"
-    fi
-)
-
-ipc_vim() {
-    local full_file_path=`cross_realpath $1`
-    local sock_name=$2
-    local cmd=$3
-    local line=$4
-    echo $line $full_file_path $cmd | nc -U ${VIM9_NOX11_SOCK_DIR}/${sock_name}.sock
-}
-
-local_vim() {
-    local vim_cmd=`whence -p vim`
-    local full_file_path=`cross_realpath $1`
-    local sock_name=$2
-    VIM9_NOX11_VIMSERVER=$sock_name $vim_cmd $full_file_path
-}
-
-vim() {
-    local cmd="/e"
-    local line="+0"
-    for arg in "$@"; do
-        if [[ -f $arg ]]; then
-            local file=$arg
-        elif [[ $arg =~ '^\+[0-9]+' ]]; then
-            line=$arg
-        elif [[ $arg == "/v" ]]; then
-            cmd="/v"
-        elif [[ $arg == "/t" ]]; then
-            cmd="/t"
-        fi
-    done
-
-    if [[ ! -z $VIM9_NOX11_VIMSERVER && ! -z $file ]]; then
-        ipc_vim $file ${VIM9_NOX11_VIMSERVER} $cmd $line
-        if [[ -z $VIM_TERMINAL ]]; then
-            exit
-        fi
-    else
-        local vim_cmd=`whence -p vim`
-        VIM9_NOX11_VIMSERVER=VIM`date +%s` $vim_cmd $@
-    fi
-}
-
-nox11vim() {
+cvim() {
     # When inside the vim shell, no new blank session
     if [[ ! -z $VIM && -z $VIM9_NOX11_VIMSERVER ]]; then
        echo "Already in vim shell without X server"
@@ -151,15 +85,16 @@ nox11vim() {
     ## Now we can execute vim
     # Empty argument or only server name
     if [[ -z $file_name ]]; then
-        VIM9_NOX11_VIMSERVER=$vim_server $vim_cmd
+        VIM9_NOX11_VIMSERVER=$vim_server nox11-vim
     # Accessible file argument
     elif [[ -f $file_name ]]; then
-        $vim_or_nc_cmd $file_name $vim_server $cmd +0
+        VIM9_NOX11_VIMSERVER=$vim_server nox11-vim $file_name $cmd
         found=1
     # Search file
     else 
         git_root_dir=`git rev-parse --show-toplevel 2> /dev/null`
         if [[ ! -z $git_root_dir && -z $search_path ]]; then
+
             result=$(git ls-files $git_root_dir | egrep "(/|^)${file_name}$")
         elif [[ ! -z $git_root_dir && ! -z $search_path ]]; then
             result=$(git ls-files $search_path | egrep "(/|^)${file_name}$")
@@ -174,7 +109,7 @@ nox11vim() {
             echo "Multiple files found"
             echo $result
         else
-            $vim_or_nc_cmd $result $vim_server $cmd +0
+            VIM9_NOX11_VIMSERVER=$vim_server nox11-vim $result $cmd
             found=1
         fi
     fi
