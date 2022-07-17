@@ -1,4 +1,5 @@
 #!/bin/zsh
+
 vim_cmd=`whence -p vim`
 
 cross_realpath() (
@@ -25,29 +26,33 @@ alt_vim() {
     local cmd="/e"
     local line="+0"
     for arg in "$@"; do
-        if [[ -f $arg ]]; then
-            local file=$arg
-        elif [[ $arg =~ '^\+[0-9]+' ]]; then
+        if [[ $arg =~ '^\+[0-9]+' ]]; then
             line=$arg
         elif [[ $arg == "/v" ]]; then
             cmd="/v"
         elif [[ $arg == "/t" ]]; then
             cmd="/t"
+        elif [[ $arg == "/e" ]]; then
+            cmd="/e"
+        else
+            local file=$arg
         fi
     done
 
-    if [[ ! -z $VIM9_NOX11_VIMSERVER && ! -z $file ]]; then
+    if [[ ! -z $file ]]; then
         ipc_vim $file ${VIM9_NOX11_VIMSERVER} $cmd $line
         if [[ -z $VIM_TERMINAL ]]; then
             exit
         fi
     else
-        VIM9_NOX11_VIMSERVER=VIM`date +%s` $vim_cmd $@
+        echo "No new session allowed from vim terminal"
     fi
 }
 
 if [[ "$@" =~ 'COMMIT_EDITMSG' ]]; then
     VIM9_NOX11_VIMSERVER='' $vim_cmd $@
+elif [[ -z $VIM9_NOX11_VIMSERVER ]]; then
+    VIM9_NOX11_VIMSERVER=VIM`date +%s` $vim_cmd $@
 else
     alt_vim $@
 fi

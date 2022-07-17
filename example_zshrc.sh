@@ -10,7 +10,7 @@ alias vim=nox11-vim
 
 
 # Optional setting for opening files without full path with completion
-_zsh_nox11vim_completion() {
+_zsh_cvim_completion() {
     if ! (( ${#_comp_file_names[@]} )); then
         local git_root_dir
         git_root_dir=`git rev-parse --show-toplevel 2> /dev/null`
@@ -26,19 +26,11 @@ _zsh_nox11vim_completion() {
 }
 
 if [[ ! -z $VIM ]]; then
-    compdef _zsh_nox11vim_completion nox11vim
+    compdef _zsh_cvim_completion cvim
 fi
 
 cvim() {
-    # When inside the vim shell, no new blank session
-    if [[ ! -z $VIM && -z $VIM9_NOX11_VIMSERVER ]]; then
-       echo "Already in vim shell without X server"
-       return
-    elif [[ ! -z $VIM9_NOX11_VIMSERVER && -z $1 ]]; then
-       echo "Already in vim shell"
-       return
-    fi
-
+    local vim_cmd=`whence -p vim`
     local vim_server
     local file_name
     local search_path
@@ -76,7 +68,7 @@ cvim() {
     ## Now we can execute vim
     # Empty argument or only server name
     if [[ -z $file_name ]]; then
-        VIM9_NOX11_VIMSERVER=$vim_server nox11-vim
+        VIM9_NOX11_VIMSERVER=$vim_server $vim_cmd
     # Accessible file argument
     elif [[ -f $file_name ]]; then
         VIM9_NOX11_VIMSERVER=$vim_server nox11-vim $file_name $cmd
