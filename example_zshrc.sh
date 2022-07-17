@@ -9,7 +9,7 @@
 # Optionally set environment variable for unix domain socket directory
 export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
 # Optionally replace EDITOR
-export EDITOR="source $HOME/bin/nox11-vim"
+export EDITOR="$HOME/bin/nox11-vim"
 # Optionally replace vim
 alias vim="source $HOME/bin/nox11-vim"
 
