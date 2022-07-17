@@ -15,7 +15,11 @@ cross_realpath() (
 )
 
 ipc_vim() {
-    local full_file_path=`cross_realpath $1`
+    if [[ $full_file_path =~ '^\/.*$' ]]; then
+        local full_file_path=`cross_realpath $1`
+    else
+        local full_file_path=$1
+    fi
     local sock_name=$2
     local cmd=$3
     local line=$4
@@ -49,7 +53,7 @@ alt_vim() {
     fi
 }
 
-if [[ "$@" =~ 'COMMIT_EDITMSG' ]]; then
+if [[ "$@" =~ '^.*\/COMMIT_EDITMSG$' ]]; then
     VIM9_NOX11_VIMSERVER='' $vim_cmd $@
 elif [[ -z $VIM9_NOX11_VIMSERVER ]]; then
     VIM9_NOX11_VIMSERVER=VIM`date +%s` $vim_cmd $@
