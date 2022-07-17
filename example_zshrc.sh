@@ -34,7 +34,6 @@ if [[ ! -z $VIM ]]; then
 fi
 
 fvim() {
-    local vim_cmd=`whence -p vim`
     local vim_server
     local file_name
     local search_path
@@ -42,7 +41,7 @@ fvim() {
     local result
     local found=0
     local git_root_dir
-    local cmd='/e'
+    local cmd
     # Parse arg based on string instead of position or option
     for arg in "$@"; do
         if [[ -d $arg ]]; then
@@ -65,14 +64,12 @@ fvim() {
     # Make sure vim_server is set
     if [[ -z $vim_server && ! -z $VIM9_NOX11_VIMSERVER ]]; then
         vim_server=$VIM9_NOX11_VIMSERVER
-    elif [[ -z $vim_server ]]; then
-        vim_server=VIM`date +%s`
     fi
 
     ## Now we can execute vim
     # Empty argument or only server name
     if [[ -z $file_name ]]; then
-        VIM9_NOX11_VIMSERVER=$vim_server $vim_cmd
+        VIM9_NOX11_VIMSERVER=$vim_server nox11-vim
     # Accessible file argument
     elif [[ -f $file_name ]]; then
         VIM9_NOX11_VIMSERVER=$vim_server nox11-vim $file_name $cmd
