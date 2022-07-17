@@ -46,8 +46,8 @@ alt_vim() {
     fi
 }
 
-if [[ ! -z $@ && "`basename $@`" =~ 'COMMIT_EDITMSG' ]]; then
-    $vim_cmd $@
+if [[ "$@" =~ 'COMMIT_EDITMSG' ]]; then
+    VIM9_NOX11_VIMSERVER='' $vim_cmd $@
 else
     alt_vim $@
 fi
