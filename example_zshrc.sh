@@ -1,16 +1,20 @@
 # Usage
-# 1. Install nox11-vim shell script to path and set compulsory environment variable (VIM9_NOX11_SOCK_DIR)
-# 2. Optionally install other zsh functions in your zshrc or zshenv for replacing vim and opening files without full path
+# 1. Install nox11-vim shell script to $PATH
+# 2. Optionally override the environment variable VIM9_NOX11_SOCK_DIR to change unix domain socket directory
+# 3. Optionally replace $EDITOR with nox11-vim to support gdb and such.
+# 4. Optionally set alias for vim to make nox11-vim default.
+# 5. Optionally install fvim functions in your zshrc or zshenv for replacing vim and opening files without full path.
 
-# This environment must exist and used by vim9-nox11
+
+# Optionally set environment variable for unix domain socket directory
 export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
-export EDITOR=nox11-vim
+# Optionally replace EDITOR
+export EDITOR="source $HOME/bin/nox11-vim"
 # Optionally replace vim
-alias vim=nox11-vim
-
+alias vim="source $HOME/bin/nox11-vim"
 
 # Optional setting for opening files without full path with completion
-_zsh_cvim_completion() {
+_zsh_fvim_completion() {
     if ! (( ${#_comp_file_names[@]} )); then
         local git_root_dir
         git_root_dir=`git rev-parse --show-toplevel 2> /dev/null`
@@ -26,10 +30,10 @@ _zsh_cvim_completion() {
 }
 
 if [[ ! -z $VIM ]]; then
-    compdef _zsh_cvim_completion cvim
+    compdef _zsh_fvim_completion fvim
 fi
 
-cvim() {
+fvim() {
     local vim_cmd=`whence -p vim`
     local vim_server
     local file_name
