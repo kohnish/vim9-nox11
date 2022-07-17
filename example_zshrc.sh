@@ -1,12 +1,12 @@
 # Usage
 # 1. Install nox11-vim shell script to $PATH
-# 2. Optionally override the environment variable VIM9_NOX11_SOCK_DIR to change unix domain socket directory
+# 2. Set the environment variable VIM9_NOX11_SOCK_DIR
 # 3. Optionally replace $EDITOR with nox11-vim to support gdb and such.
 # 4. Optionally set alias for vim to make nox11-vim default.
 # 5. Optionally install fvim functions in your zshrc or zshenv for replacing vim and opening files without full path.
 
 
-# Optionally set environment variable for unix domain socket directory
+# Set environment variable for unix domain socket directory for nox11-vim script
 export VIM9_NOX11_SOCK_DIR=$HOME/.vim/pack/plugins/opt/vim9-nox11/.ipc
 # Optionally replace EDITOR
 export EDITOR="$HOME/bin/nox11-vim"
