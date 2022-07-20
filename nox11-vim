@@ -16,9 +16,9 @@ cross_realpath() (
 
 ipc_vim() {
     if [[ $full_file_path =~ '^\/.*$' ]]; then
-        local full_file_path=`cross_realpath $1`
-    else
         local full_file_path=$1
+    else
+        local full_file_path=`cross_realpath $1`
     fi
     local sock_name=$2
     local cmd=$3
