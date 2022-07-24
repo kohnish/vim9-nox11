@@ -1,9 +1,9 @@
 vim9script
 
-var WIN_FOCUSED = 0 
-var WIN_NOT_FOUND_FOCUSED_ON_NON_TERMINAL = 1
-var WIN_NOT_FOUND_ONLY_TERMINAL = 2
-var WIN_NOT_FOUND = 3
+const WIN_FOCUSED = 0 
+const WIN_NOT_FOUND_FOCUSED_ON_NON_TERMINAL = 1
+const WIN_NOT_FOUND_ONLY_TERMINAL = 2
+const WIN_NOT_FOUND = 3
 
 def FocusIfOpen(filename: string): number
     var f_ret = WIN_NOT_FOUND
