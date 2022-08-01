@@ -4,11 +4,9 @@ if empty($VIM9_NOX11_VIMSERVER)
     finish
 endif
 
-import autoload "../lazyload/window_handler.vim" as window_handler
+import autoload "../lazyload/window_handler.vim"
 
 var g_initialised = false
-const script_dir = fnamemodify(resolve(expand('<script>:p')), ':h')
-var default_executable_path = script_dir .. "/../bin/vim9-nox11"
 
 def StartServer(server_name: string): void
     if g_initialised
@@ -21,6 +19,9 @@ def StartServer(server_name: string): void
         "in_mode": "json",
         "stoponexit": "int",
     }
+
+    var script_dir = fnamemodify(resolve(expand('<script>:p')), ':h')
+    var default_executable_path = script_dir .. "/../bin/vim9-nox11"
 
     var executable = default_executable_path
     if !exists('g:vim9_nox11_exe_path')
@@ -51,7 +52,7 @@ enddef
 
 if exists('g:vim9_nox11_init_on_term') && g:vim9_nox11_init_on_term
     augroup Vim9NoX11
-        autocmd TerminalOpen * StartServer($VIM9_NOX11_VIMSERVER)
+        autocmd TerminalOpen,ShellCmdPre * StartServer($VIM9_NOX11_VIMSERVER)
     augroup END
 else
     StartServer($VIM9_NOX11_VIMSERVER)
