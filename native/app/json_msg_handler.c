@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 void handle_msg(const char *msg_str) {
     char msg[MAX_VIM_INPUT] = {0};
     char *rest = msg;
