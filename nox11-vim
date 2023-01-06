@@ -53,7 +53,7 @@ alt_vim() {
     fi
 }
 
-if [[ "$@" =~ '^.*\/COMMIT_EDITMSG$' ]]; then
+if [[ "$@" =~ '^.*\/(COMMIT_EDITMSG|TAG_EDITMSG)$' ]]; then
     VIM9_NOX11_VIMSERVER='' $vim_cmd $@
 elif [[ -z $VIM9_NOX11_VIMSERVER ]]; then
     VIM9_NOX11_VIMSERVER=VIM`date +%s` $vim_cmd $@
