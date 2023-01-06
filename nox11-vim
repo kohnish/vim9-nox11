@@ -2,23 +2,11 @@
 
 vim_cmd=`whence -p vim`
 
-cross_realpath() (
-    if [ -x "$(command -v realpath)" ]; then
-        echo `realpath $1`
-    else
-        local orig_dir=$PWD
-        cd "$(dirname "$1")"
-        local real_path="$PWD/$(basename "$1")"
-        cd "$orig_dir"
-        echo "$real_path"
-    fi
-)
-
 ipc_vim() {
     if [[ $full_file_path =~ '^\/.*$' ]]; then
         local full_file_path=$1
     else
-        local full_file_path=`cross_realpath $1`
+        local full_file_path=`readlink -f $1`
     fi
     local sock_name=$2
     local cmd=$3
