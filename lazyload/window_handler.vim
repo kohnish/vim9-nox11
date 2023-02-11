@@ -1,25 +1,23 @@
 vim9script
 
-const WIN_FOCUSED = 0 
-const WIN_NOT_FOUND_FOCUSED_ON_NON_TERMINAL = 1
-const WIN_NOT_FOUND_ONLY_TERMINAL = 2
-const WIN_NOT_FOUND = 3
+const WIN_ALREADY_FOCUSED = 0 
+const WIN_FOCUSED_ON_MODIFIABLE = 1
+const WIN_NOT_FOUND = 2
 
 def FocusIfOpen(filename: string): number
     var f_ret = WIN_NOT_FOUND
     for buf in getbufinfo()
         if buf.loaded && buf.name == filename && len(buf.windows) > 0
             win_gotoid(buf.windows[0])
-            return WIN_FOCUSED
-        elseif &buftype == "terminal" && buf.loaded && len(buf.windows) > 0 && getbufvar(buf.bufnr, '&buftype') != "terminal"
+            return WIN_ALREADY_FOCUSED
+        elseif len(buf.windows) > 0 && getbufvar(buf.bufnr, '&buftype') != "terminal"
             win_gotoid(buf.windows[0])
-            f_ret = WIN_NOT_FOUND_FOCUSED_ON_NON_TERMINAL
+            if !&modified
+                f_ret = WIN_FOCUSED_ON_MODIFIABLE
+            endif
         endif
     endfor
-    if &buftype == "terminal" && f_ret != WIN_NOT_FOUND_FOCUSED_ON_NON_TERMINAL
-        return WIN_NOT_FOUND_ONLY_TERMINAL
-    endif
-    return WIN_NOT_FOUND
+    return f_ret
 enddef
 
 export def HandleJsonInput(json_msg: dict<any>): void
@@ -32,17 +30,17 @@ export def HandleJsonInput(json_msg: dict<any>): void
         var file_path = json_msg[key_name]
         var line = json_msg["line"][1 : -1]
         var f_ret = FocusIfOpen(file_path)
-        if f_ret == WIN_NOT_FOUND_ONLY_TERMINAL
-            execute 'tabnew ' .. file_path
-        elseif f_ret != WIN_FOCUSED
+        if f_ret != WIN_ALREADY_FOCUSED
             if cmd == "/v"
                 execute 'vsplit ' .. file_path
             elseif cmd == "/t"
                 execute 'tabnew ' .. file_path
-            elseif &modified
-                execute 'vsplit ' .. file_path
-            else
+            endif
+
+            if f_ret == WIN_FOCUSED_ON_MODIFIABLE
                 execute "edit " .. file_path
+            else
+                execute 'vsplit ' .. file_path
             endif
         endif
         execute ':' .. line
