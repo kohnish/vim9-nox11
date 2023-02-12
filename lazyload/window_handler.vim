@@ -35,12 +35,12 @@ export def HandleJsonInput(json_msg: dict<any>): void
                 execute 'vsplit ' .. file_path
             elseif cmd == "/t"
                 execute 'tabnew ' .. file_path
-            endif
-
-            if f_ret == WIN_FOCUSED_ON_MODIFIABLE
-                execute "edit " .. file_path
             else
-                execute 'vsplit ' .. file_path
+                if f_ret == WIN_FOCUSED_ON_MODIFIABLE
+                    execute "edit " .. file_path
+                else
+                    execute 'vsplit ' .. file_path
+                endif
             endif
         endif
         execute ':' .. line
