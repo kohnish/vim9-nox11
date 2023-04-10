@@ -3,10 +3,10 @@
 vim_cmd=`whence -p vim`
 
 ipc_vim() {
-    if [[ $full_file_path =~ '^\/.*$' ]]; then
-        local full_file_path=$1
-    else
-        local full_file_path=`readlink -f $1`
+    local full_file_path=$1
+    local full_path=`readlink -f $1`
+    if [[ ! -z $full_path ]]; then
+        full_file_path=$full_path
     fi
     local sock_name=$2
     local cmd=$3
