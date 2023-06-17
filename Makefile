@@ -11,12 +11,12 @@ online-build:
 
 linux-download:
 	mkdir -p bin
-	curl -L https://github.com/kohnish/vim9-nox11/releases/download/v0.1/vim9-nox11-linux-x86-64 -o bin/vim9-nox11
+	curl -L https://github.com/kohnish/vim9-nox11/releases/download/v0.3/vim9-nox11-linux-x86-64 -o bin/vim9-nox11
 	chmod +x bin/vim9-nox11
 
 win-download:
 	mkdir -p bin
-	curl -L https://github.com/kohnish/vim9-nox11/releases/download/v0.1/vim9-nox11-win-x86-64 -o bin/vim9-nox11.exe
+	curl -L https://github.com/kohnish/vim9-nox11/releases/download/v0.3/vim9-nox11-win-x86-64 -o bin/vim9-nox11.exe
 	chmod +x bin/vim9-nox11.exe
 
 clean:
