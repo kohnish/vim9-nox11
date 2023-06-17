@@ -57,3 +57,9 @@ if exists('g:vim9_nox11_init_on_term') && g:vim9_nox11_init_on_term
 else
     StartServer($VIM9_NOX11_VIMSERVER)
 endif
+
+def Make(...args: list<any>): void
+    execute "!" .. "sh -c 'cd " ..  expand('<script>:p:h') .. "/../" .. " && make -j4 " .. join(args) .. "'"
+enddef
+
+command! -nargs=* Vim9Nox11Make Make(<q-args>)
