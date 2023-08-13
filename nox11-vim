@@ -32,9 +32,13 @@ alt_vim() {
     done
 
     if [[ ! -z $file ]]; then
-        ipc_vim $file ${VIM9_NOX11_VIMSERVER} $cmd $line
-        if [[ -z $VIM_TERMINAL ]]; then
-            exit
+        if [[ "${file}" =~ "^--.*$" ]]; then
+            $vim_cmd $@
+        else
+            ipc_vim $file ${VIM9_NOX11_VIMSERVER} $cmd $line
+            if [[ -z $VIM_TERMINAL ]]; then
+                exit
+            fi
         fi
     else
         echo "No new session allowed from vim terminal"
